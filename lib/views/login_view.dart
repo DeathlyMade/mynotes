@@ -32,8 +32,8 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
-        backgroundColor: Colors.blue,
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
+        // backgroundColor: Colors.blue,
+        // titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
       ),
       body: Column(
               children: [
@@ -60,11 +60,11 @@ class _LoginViewState extends State<LoginView> {
                   TextButton(
                     onPressed: () async{
                     try{
-                      final credentials = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      await FirebaseAuth.instance.signInWithEmailAndPassword(
                       email: _email.text,
                       password: _password.text,
                     );
-                    print(credentials);
+                    Navigator.of(context).pushNamedAndRemoveUntil('/notes', (route) => false);
                   } on FirebaseAuthException catch (e) {
                   if(e.code == 'invalid-credential'){
                     print('Invalid credentials. Please try again.');

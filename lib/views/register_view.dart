@@ -32,8 +32,8 @@ class _RegisterViewState extends State<RegisterView> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
-        backgroundColor: Colors.blue,
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
+        // backgroundColor: Colors.blue,
+        // titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
       ),
       body: Column(
                 children: [
