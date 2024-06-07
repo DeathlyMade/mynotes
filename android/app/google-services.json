@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "34653800211",
+    "project_id": "mynotes-proj-divyam2",
+    "storage_bucket": "mynotes-proj-divyam2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34653800211:android:615fbdba71c58cc4d27ce6",
+        "android_client_info": {
+          "package_name": "com.blah.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrJGCGyCRui49M2pRPmG5waT06syxC5y4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
