@@ -34,74 +34,57 @@ class _RegisterViewState extends State<RegisterView> {
         title: const Text('Register'),
         backgroundColor: Colors.blue,
         titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
-      ),body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          }
-          // If the Firebase app has been initialized, display the registration form
-          // with email and password fields.
-          // Otherwise, display an error message.
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Column(
-              children: [
-                TextField(
-                  controller: _email,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your email address',
+      ),
+      body: Column(
+                children: [
+                  TextField(
+                    controller: _email,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your email address',
+                    ),
                   ),
-                ),
-                TextField(
-                  obscureText: true,
-                  enableSuggestions: false,
-                  autocorrect: false,
-                  controller: _password,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Enter your password',
+                  TextField(
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    controller: _password,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Enter your password',
+                    ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () async{
-                    try{
-                      final credentials = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                        email: _email.text,
-                        password: _password.text,
-                      );
-                      print(credentials);
-                    } on FirebaseAuthException catch (e) {
+                  TextButton(
+                    onPressed: () async{
+                      try{
+                        final credentials = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                          email: _email.text,
+                          password: _password.text,
+                        );
+                        print(credentials);
+                      } on FirebaseAuthException catch (e) {
                       if(e.code == 'weak-password') {
-                        print('The password provided is too weak.');
-                      } else if (e.code == 'email-already-in-use') {
-                        print('The account already exists for that email.');
-                      }
-                      else if(e.code == 'invalid-email') {
-                        print('The email address is not valid.');
-                      }
+                      print('The password provided is too weak.');
+                    } else if (e.code == 'email-already-in-use') {
+                      print('The account already exists for that email.');
                     }
-                  },
-                  child: const Text('Register', style: TextStyle(fontSize: 20, color: Colors.blue), 
-                ),
-                      ),
-              ],
-            );
-          }
-          return const Text('Error: Firebase app initialization failed.');
-        },
+                    else if(e.code == 'invalid-email') {
+                    print('The email address is not valid.');
+                  }
+                }
+              },
+              child: const Text('Register', style: TextStyle(fontSize: 20, color: Colors.blue), 
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+            }, child: const Text('Already Registered? Login Here!', style: TextStyle(fontSize: 20, color: Colors.blue)),
+          )
+        ],
       ),
     );
   }

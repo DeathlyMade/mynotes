@@ -2,6 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mynotes/firebase_options.dart';
+import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/register_view.dart';
+import 'package:mynotes/views/verify_email_view.dart';
 
 void main() {
   runApp(
@@ -13,6 +16,10 @@ void main() {
         useMaterial3: true,
       ),
       home: const HomePage(),
+      routes: {
+        '/login': (context) => const LoginView(),
+        '/register': (context) => const RegisterView(),
+      },
     ),
   );
 }
@@ -47,15 +54,19 @@ class HomePage extends StatelessWidget {
           // Otherwise, display an error message.
           if (snapshot.connectionState == ConnectionState.done) {
             final user = FirebaseAuth.instance.currentUser;
-            if(user?.emailVerified ?? false)
+            if(user == null)
             {
-              print("Your email is verified");
+              return const LoginView();
             }
             else
-            {
-              print("Your need to verify your email first");
-            }
-            return const Text('Firebase app initialization successful.');
+              if(user.emailVerified)
+              {
+                return const Text('Firebase app initialization successful.');
+              }
+              else
+              {
+                return const VerifyEmailView();
+              }
           }
           return const Text('Error: Firebase app initialization failed.');
         },
