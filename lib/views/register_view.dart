@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/contants/routes.dart';
 import 'package:mynotes/firebase_options.dart';
+import 'package:mynotes/utilities/show_error_dialogue.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -61,20 +62,27 @@ class _RegisterViewState extends State<RegisterView> {
                   TextButton(
                     onPressed: () async{
                       try{
-                        final credentials = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+                        await FirebaseAuth.instance.createUserWithEmailAndPassword(
                           email: _email.text,
                           password: _password.text,
                         );
-                        print(credentials);
+                        final user = FirebaseAuth.instance.currentUser;
+                        await user?.sendEmailVerification();
+                        Navigator.of(context).pushNamed(verifyEmailRoute);
                       } on FirebaseAuthException catch (e) {
                       if(e.code == 'weak-password') {
-                      print('The password provided is too weak.');
+                      await showErrorDialog(context, 'The password provided is too weak.');
                     } else if (e.code == 'email-already-in-use') {
-                      print('The account already exists for that email.');
+                      await showErrorDialog(context, 'An account already exists for that email.');
                     }
                     else if(e.code == 'invalid-email') {
-                    print('The email address is not valid.');
+                    await showErrorDialog(context, 'The email address is not valid.');
                   }
+                  else{
+                    await showErrorDialog(context, e.code);
+                  }
+                }catch(e){
+                  await showErrorDialog(context, e.toString());
                 }
               },
               child: const Text('Register', style: TextStyle(fontSize: 20, color: Colors.blue), 
