@@ -91,7 +91,7 @@ class MockAuthProvider implements AuthProvider {
     }
     if(email == 'div@gmail.com') throw InvalidCredentialsException();
     if(password == '123456') throw InvalidCredentialsException();
-    const user = AuthUser(isEmailVerified: false);
+    const user = AuthUser(isEmailVerified: false, email: 'blah@gmail.com');
     _user=user;
     return Future.value(user);
   }
@@ -117,7 +117,7 @@ class MockAuthProvider implements AuthProvider {
     if(user == null){
       throw UserNotLoggedInException();
     }
-    const newuser = AuthUser(isEmailVerified: true);
+    const newuser = AuthUser(isEmailVerified: true, email: 'blah@gmail.com');
     _user = newuser;
   }
   
