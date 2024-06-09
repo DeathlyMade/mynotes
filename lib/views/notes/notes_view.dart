@@ -3,6 +3,8 @@ import 'package:mynotes/contants/routes.dart';
 import 'package:mynotes/enums/menu_actions.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/crud/notes_service.dart';
+import 'package:mynotes/utilities/dialogs/logout_dialog.dart';
+import 'package:mynotes/views/notes/notes_list_view.dart';
 
 
 class NotesView extends StatefulWidget {
@@ -71,25 +73,17 @@ class _NotesViewState extends State<NotesView> {
                     case ConnectionState.active:
                       if(snapshot.hasData){
                         final notes = snapshot.data as List<DatabaseNote>;
-                        return ListView.builder(
-                          itemCount: notes.length,
-                          itemBuilder: (context, index) {
-                            final note = notes[index];
-                            return ListTile(
-                              title: Text(
-                                note.text,
-                                maxLines: 1,
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                                ),
-                            );
-                              },
-                            );
-                          }else{
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
+                        return NotesListView(
+                          notes: notes,
+                           onDeleteNote: (note) async {
+                            await _notesService.deleteNote(id: note.id);
+                           }
+                          );
+                        } else{
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
                     default:
                       return const Center(
                         child: CircularProgressIndicator(),
@@ -106,30 +100,4 @@ class _NotesViewState extends State<NotesView> {
         ),
     );
   }
-  }
-
-Future<bool> showLogoutDialog(BuildContext context) async {
-  return await showDialog<bool>(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(false);
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(true);
-            },
-            child: const Text('Logout'),
-          ),
-        ],
-      );
-    },
-  ).then((value) => value ?? false);
 }
