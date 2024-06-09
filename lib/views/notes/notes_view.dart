@@ -24,12 +24,6 @@ class _NotesViewState extends State<NotesView> {
   }
 
   @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -75,26 +69,44 @@ class _NotesViewState extends State<NotesView> {
                   switch(snapshot.connectionState){
                     case ConnectionState.waiting:
                     case ConnectionState.active:
-                      return const Center(
-                        child: Text('Waiting for Notes...'),
-                      );
+                      if(snapshot.hasData){
+                        final notes = snapshot.data as List<DatabaseNote>;
+                        return ListView.builder(
+                          itemCount: notes.length,
+                          itemBuilder: (context, index) {
+                            final note = notes[index];
+                            return ListTile(
+                              title: Text(
+                                note.text,
+                                maxLines: 1,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                                ),
+                            );
+                              },
+                            );
+                          }else{
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
                     default:
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
                   }
-                },
+                }
               );
             default:
               return const Center(
                 child: CircularProgressIndicator(),
               );
-          }
-        },
-      )
-      );
+            }
+          },
+        ),
+    );
   }
-}
+  }
 
 Future<bool> showLogoutDialog(BuildContext context) async {
   return await showDialog<bool>(
