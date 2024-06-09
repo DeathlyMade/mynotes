@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/contants/routes.dart';
 import 'package:mynotes/firebase_options.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/utilities/show_error_dialogue.dart';
 
 class RegisterView extends StatefulWidget {
@@ -69,21 +70,15 @@ class _RegisterViewState extends State<RegisterView> {
                         final user = FirebaseAuth.instance.currentUser;
                         await user?.sendEmailVerification();
                         Navigator.of(context).pushNamed(verifyEmailRoute);
-                      } on FirebaseAuthException catch (e) {
-                      if(e.code == 'weak-password') {
-                      await showErrorDialog(context, 'The password provided is too weak.');
-                    } else if (e.code == 'email-already-in-use') {
-                      await showErrorDialog(context, 'An account already exists for that email.');
-                    }
-                    else if(e.code == 'invalid-email') {
-                    await showErrorDialog(context, 'The email address is not valid.');
-                  }
-                  else{
-                    await showErrorDialog(context, e.code);
-                  }
-                }catch(e){
-                  await showErrorDialog(context, e.toString());
-                }
+                      }on WeakPasswordException{
+                        await showErrorDialog(context, 'The password provided is too weak.');
+                      }on EmailAlreadyInUseException{
+                        await showErrorDialog(context, 'An account already exists for that email.');
+                      }on InvalidEmailException{
+                        await showErrorDialog(context, 'The email address is not valid.');
+                      }on GenericAuthException{
+                        await showErrorDialog(context, 'Failed to Register User. Please try again.');
+                      }
               },
               child: const Text('Register', style: TextStyle(fontSize: 20, color: Colors.blue), 
             ),

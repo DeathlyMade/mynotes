@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/contants/routes.dart';
 import 'package:mynotes/firebase_options.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/utilities/show_error_dialogue.dart';
 
 class LoginView extends StatefulWidget {
@@ -62,12 +62,9 @@ class _LoginViewState extends State<LoginView> {
                   TextButton(
                     onPressed: () async{
                     try{
-                      await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: _email.text,
-                      password: _password.text,
-                    );
-                    final user = FirebaseAuth.instance.currentUser;
-                    if(user?.emailVerified ?? false)
+                      await AuthService.firebase().logIn(email: _email.text, password: _password.text); 
+                    final user = AuthService.firebase().currentUser;
+                    if(user?.isEmailVerified ?? false)
                     {
                       Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false);
                     }
@@ -75,17 +72,12 @@ class _LoginViewState extends State<LoginView> {
                     {
                       Navigator.of(context).pushNamedAndRemoveUntil(verifyEmailRoute, (route) => false);
                     }
-                  } on FirebaseAuthException catch (e) {
-                  if(e.code == 'invalid-credential'){
+                  }on InvalidCredentialsException{
                     await showErrorDialog(context, 'Invalid credentials');
+                  } on GenericAuthException{
+                    await showErrorDialog(context, 'Authentication Error');
                   }
-                  else{
-                    await showErrorDialog(context, e.code);
-                  }
-                }catch(e){
-                  await showErrorDialog(context, e.toString());
-                }
-              },
+                  },
               child: const Text('Login', style: TextStyle(fontSize: 20, color: Colors.blue), 
             ),
           ),
