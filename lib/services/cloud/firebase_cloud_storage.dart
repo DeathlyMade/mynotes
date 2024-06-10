@@ -30,14 +30,8 @@ class FirebaseCloudStorage{
 
   Future<Iterable<CloudNote>> getNotes({required String ownerUserId}) async {
     try{
-      return await note.where(ownerUserFieldName, isEqualTo: ownerUserId).get().then(
-        (value) => value.docs.map((doc){
-          return CloudNote(
-            documentId: doc.id,
-            ownerUserId: doc.data()[ownerUserFieldName] as String,
-            text: doc.data()[textFieldName] as String
-          );
-        },
+      return await notes.where(ownerUserFieldName, isEqualTo: ownerUserId).get().then(
+        (value) => value.docs.map((doc) => CloudNote.fromSnapshot(doc)
       ),
     );
   }catch(e){
@@ -45,11 +39,14 @@ class FirebaseCloudStorage{
     }
   }
 
-  void createNewNote({required String ownerUserId}) async {
-    try{await note.add({
+  Future<CloudNote> createNewNote({required String ownerUserId}) async {
+    try{
+      final document = await notes.add({
       ownerUserFieldName: ownerUserId,
       textFieldName: '',
     });
+      final fetchedNote = await document.get();
+      return CloudNote(documentId: fetchedNote.id, ownerUserId: ownerUserId, text: '');
     }catch(e){
       throw CouldNotCreateNoteException();
     }
