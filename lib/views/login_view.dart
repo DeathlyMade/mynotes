@@ -49,50 +49,60 @@ class _LoginViewState extends State<LoginView> {
           // backgroundColor: Colors.blue,
           // titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
         ),
-        body: Column(
-          children: [
-            TextField(
-              controller: _email,
-              enableSuggestions: false,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter your email address',
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: _email,
+                enableSuggestions: false,
+                autocorrect: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter your email address',
+                ),
               ),
-            ),
-            TextField(
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              controller: _password,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Enter your password',
+              TextField(
+                obscureText: true,
+                enableSuggestions: false,
+                autocorrect: false,
+                controller: _password,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'Enter your password',
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () async {
-                final email = _email.text;
-                final password = _password.text;
-                context.read<AuthBloc>().add(AuthEventLogin(
-                      email,
-                      password,
-                    ));
-              },
-              child: const Text(
-                'Login',
-                style: TextStyle(fontSize: 20, color: Colors.blue),
+              TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  context.read<AuthBloc>().add(AuthEventLogin(
+                        email,
+                        password,
+                      ));
+                },
+                child: const Text(
+                  'Login',
+                  style: TextStyle(fontSize: 20, color: Colors.blue),
+                ),
               ),
-            ),
-            TextButton(
-              onPressed: () {
-                context.read<AuthBloc>().add(const AuthEventShouldRegister());
-              },
-              child: const Text('Not Registered? Register Here!',
-                  style: TextStyle(fontSize: 20, color: Colors.blue)),
-            )
-          ],
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventForgotPassword());
+                },
+                child: const Text('Forgot Password?',
+                    style: TextStyle(fontSize: 20, color: Colors.blue)),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventShouldRegister());
+                },
+                child: const Text('Not Registered? Register Here!',
+                    style: TextStyle(fontSize: 20, color: Colors.blue)),
+              )
+            ],
+          ),
         ),
       ),
     );
